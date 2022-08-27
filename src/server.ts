@@ -36,24 +36,33 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
     res.send("try GET /filteredimage?image_url={{}}");
   });
 
+  let imageLocation: string[] = [];
   app.get(
     "/filteredimage",
     async (req: { query: { image_url: string } }, res: any) => {
       try {
         const { image_url } = req.query;
-        let imageLocation: string[] = [];
+
         const filteredImage = await filterImageFromURL(image_url);
 
         imageLocation.push(filteredImage);
-        res.json({ "image-location": filteredImage });
-        deleteLocalFiles(imageLocation);
+        res.sendFile(filteredImage);
       } catch (error) {
         return res.status(422).json({ error: error });
       }
     }
   );
 
-  
+  app.delete("/deleteImage", async (req: any, res: any) => {
+    try {
+      await deleteLocalFiles(imageLocation);
+      return res.status(200).json({ message: "succesfully deleted images" });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ error: error, message: "tmp folder might be empty" });
+    }
+  });
 
   // Start the Server
   app.listen(port, () => {
