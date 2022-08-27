@@ -46,7 +46,6 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
 
         imageLocation.push(filteredImage);
         res.json({ "image-location": filteredImage });
-
         deleteLocalFiles(imageLocation);
       } catch (error) {
         return res.status(422).json({ error: error });
